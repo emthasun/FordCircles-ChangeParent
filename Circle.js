@@ -3,17 +3,20 @@ export default class Circle {
     this.x = x;
     this.y = y;
     this.radius = radius;
+    this.targetRadius = radius;
     this.ctx = ctx;
     this.type = type;
     this.parentCircle = null;
     this.angle = 0;
-    this.speed = 0.01;
+    this.speed = 0.005;
     this.draw();
   }
 
   update(x, y) {
     this.x = x;
     this.y = y;
+
+    this.radius += (this.targetRadius - this.radius) * 0.1;
   }
 
   draw() {

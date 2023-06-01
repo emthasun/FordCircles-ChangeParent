@@ -1,5 +1,6 @@
 import * as Tone from "tone";
 import Circle from "./Circle";
+import DebuggerLine from "./DebuggerLine";
 
 class App {
   constructor() {
@@ -16,6 +17,8 @@ class App {
     this.changeParent;
     this.tangentPoints = [];
     this.currentIndex;
+
+    this.previousParent = null;
 
     /**
      * Calcul  de la largeur de l'ensemble des cercles pour que ça prenne toute la largeur de l'écran
@@ -41,6 +44,7 @@ class App {
      */
     // this.synth = new Tone.PolySynth().toDestination();
     // this.notes = ["A", "E", "F", "G"];
+    this.debuggerLine = null;
 
     this.setup();
   }
@@ -119,7 +123,7 @@ class App {
   }
 
   compareIndex(tangent1, tangent2, currentParentIndex) {
-    console.log(tangent1, tangent2, currentParentIndex); // Debug statement
+    // console.log(tangent1, tangent2, currentParentIndex); // Debug statement
 
     if (currentParentIndex == tangent1) {
       return tangent2;
@@ -138,6 +142,7 @@ class App {
     const circle = new Circle(x, y, miniradius, 1, this.ctx);
     circle.parentCircle = parentCircle;
     circle.angle = 0;
+    circle.parentName = name;
     this.childCircles.push(circle);
   }
 
@@ -211,11 +216,10 @@ class App {
 
     this.childCircles.forEach((circle) => {
       const centerX = circle.parentCircle.x;
-      const speed = 2.5;
       const centerY = circle.parentCircle.y;
-      const radius = circle.parentCircle.radius - circle.radius;
-      const x = centerX + radius * Math.cos(circle.angle * speed);
-      const y = centerY + radius * Math.sin(circle.angle * speed);
+      const radius = circle.parentCircle.radius; // - circle.radius;
+      const x = centerX + radius * Math.cos(circle.angle);
+      const y = centerY + radius * Math.sin(circle.angle);
       circle.update(x, y);
       circle.draw();
 
@@ -224,7 +228,7 @@ class App {
         const distance = Math.sqrt(
           (point.x - circle.x) ** 2 + (point.y - circle.y) ** 2
         );
-        const isWithinRange = distance <= circle.radius + tolerance;
+        const isWithinRange = distance <= /*circle.radius + */ tolerance;
         if (isWithinRange) {
           collisionPoint = point;
           return true;
@@ -236,18 +240,57 @@ class App {
         this.changeParent = this.compareIndex(
           collisionPoint.name1,
           collisionPoint.name2,
-          this.currentIndex
+          circle.parentName
         );
-        console.log(this.changeParent);
-        console.log("changeParent:  " + this.changeParent);
-        // const dx = collisionPoint.x - circle.x;
-        // const dy = collisionPoint.y - circle.y;
-        // circle.angle = Math.atan2(dy, dx);
-        console.log("hit");
+        console.log(this.changeParent, collision);
+
+        if (
+          this.changeParent !== this.previousParent &&
+          circle.prevParent != this.changeParent
+        ) {
+          this.previousParent = this.changeParent;
+          // console.log(this.changeParent);
+
+          console.log("hit");
+          console.log("changeParent:  " + this.changeParent);
+          // const dx = collisionPoint.x - circle.x;
+          // const dy = collisionPoint.y - circle.y;
+          // circle.angle = Math.atan2(dy, dx);
+          // get the angle from the new parent center
+          const dx = collisionPoint.x - this.fordCircles[this.changeParent].x;
+          const dy = collisionPoint.y - this.fordCircles[this.changeParent].y;
+          const len = this.distance(
+            this.fordCircles[this.changeParent].x,
+            this.fordCircles[this.changeParent].y,
+            collisionPoint.x,
+            collisionPoint.y
+          );
+          this.debuggerLine = new DebuggerLine(
+            this.fordCircles[this.changeParent].x,
+            this.fordCircles[this.changeParent].y,
+            len,
+            Math.atan2(dy, dx),
+            this.ctx
+          );
+          // should get the ratio between the previous parent and the new one
+          const ratio =
+            circle.parentCircle.radius /
+            this.fordCircles[this.changeParent].radius;
+
+          circle.parentCircle = this.fordCircles[this.changeParent];
+          circle.prevParent = circle.parentName;
+          circle.parentName = this.changeParent;
+          circle.angle = Math.atan2(dy, dx);
+          // to keep "constant speed"
+          circle.speed *= -ratio;
+          circle.targetRadius = this.fordCircles[this.changeParent].radius / 4;
+        }
       }
     });
 
     this.drawTangentPoints();
+
+    if (this.debuggerLine) this.debuggerLine.draw();
 
     requestAnimationFrame(this.draw.bind(this));
   }
