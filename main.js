@@ -27,7 +27,7 @@ class App {
     /**
      * Calcul des ford circles par rapport à la séquence de Farey
      */
-    this.fareySequence(2);
+    this.fareySequence(3);
     /**
      * listener pour le redimensionnement de la fenêtre
      */
