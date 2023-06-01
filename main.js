@@ -109,9 +109,9 @@ class App {
         this.addChildCircle(circle, index);
 
         const randomSoundNumber = Math.floor(Math.random() * 7) + 1;
-        const audio = new Audio(`Assets/${randomSoundNumber}.wav`);
+        this.audio = new Audio(`Assets/${randomSoundNumber}.wav`);
 
-        audio.play();
+        this.audio.play();
         // this.synth.triggerAttackRelease(
         //   `${this.notes[Math.floor(Math.random() * this.notes.length)]}${
         //     Math.floor(Math.random() * 3) + 1.5
@@ -201,6 +201,7 @@ class App {
       const x = this.centers[i] + offsetX;
       const y = baseline - radius;
       const circle = new Circle(x, y, radius, 0, this.ctx);
+      circle.audio = new Audio(`Assets/${i <= 6 ? i + 1 : 7}.wav`);
       this.fordCircles.push(circle);
     }
   }
@@ -284,6 +285,7 @@ class App {
           // to keep "constant speed"
           circle.speed *= -ratio;
           circle.targetRadius = this.fordCircles[this.changeParent].radius / 4;
+          this.fordCircles[this.changeParent].audio.play();
         }
       }
     });
