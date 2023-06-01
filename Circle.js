@@ -30,14 +30,17 @@ export default class Circle {
     );
     if (this.type == 0) {
       //gradient.addColorStop(0, 'rgb(0, 0, 0)');
-      gradient.addColorStop(0, "rgb(0, 0, 20)");
-      gradient.addColorStop(0.6, "rgb(30, 30, 150)");
-      gradient.addColorStop(1, "rgb(70, 70, 250)");
+      // this.ctx.stroke();
+      // this.ctx.strokeStyle = "white";
+      this.ctx.fillStyle = gradient;
+      gradient.addColorStop(0, "rgb(250, 150, 20)");
+      gradient.addColorStop(0.5, "rgb(250, 100, 210)");
+      gradient.addColorStop(1, "rgb(210, 190, 255)");
     } else if (this.type == 1) {
       gradient.addColorStop(1, "rgb(255, 255, 255)");
-      gradient.addColorStop(0.93, "rgb(200, 200, 255)");
+      gradient.addColorStop(0.93, "rgb(240, 240, 240)");
       // gradient.addColorStop(0.4, 'rgb(100, 100, 200)');
-      gradient.addColorStop(0.1, "rgb(60, 60, 180)");
+      gradient.addColorStop(0.1, "rgb(200, 200, 200)");
     }
 
     this.ctx.fillStyle = gradient;

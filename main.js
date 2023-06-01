@@ -1,6 +1,6 @@
 import * as Tone from "tone";
 import Circle from "./Circle";
-import DebuggerLine from "./DebuggerLine";
+//import DebuggerLine from "./DebuggerLine";
 
 class App {
   constructor() {
@@ -23,7 +23,7 @@ class App {
     /**
      * Calcul  de la largeur de l'ensemble des cercles pour que ça prenne toute la largeur de l'écran
      */
-    this.ford_circles_width = window.innerWidth / 2;
+    this.ford_circles_width = window.innerWidth / 2.2;
     /**
      * Calcul des ford circles par rapport à la séquence de Farey
      */
@@ -39,12 +39,7 @@ class App {
     this.childCircles = [];
     document.addEventListener("click", this.checkClick.bind(this));
 
-    /**
-     * init synth
-     */
-    // this.synth = new Tone.PolySynth().toDestination();
-    // this.notes = ["A", "E", "F", "G"];
-    this.debuggerLine = null;
+    //this.debuggerLine = null;
 
     this.setup();
   }
@@ -108,8 +103,8 @@ class App {
       if (dist < circle.radius) {
         this.addChildCircle(circle, index);
 
-        const randomSoundNumber = Math.floor(Math.random() * 7) + 1;
-        this.audio = new Audio(`Assets/${randomSoundNumber}.wav`);
+        const randomSoundNumber = Math.floor(Math.random() * 19) + 1;
+        this.audio = new Audio(`Assets/sound${randomSoundNumber}.wav`);
 
         this.audio.play();
         // this.synth.triggerAttackRelease(
@@ -201,7 +196,7 @@ class App {
       const x = this.centers[i] + offsetX;
       const y = baseline - radius;
       const circle = new Circle(x, y, radius, 0, this.ctx);
-      circle.audio = new Audio(`Assets/${i <= 6 ? i + 1 : 7}.wav`);
+      circle.audio = new Audio(`Assets/sound${i <= 19 ? i + 1 : 20}.wav`);
       this.fordCircles.push(circle);
     }
   }
@@ -260,20 +255,21 @@ class App {
           // get the angle from the new parent center
           const dx = collisionPoint.x - this.fordCircles[this.changeParent].x;
           const dy = collisionPoint.y - this.fordCircles[this.changeParent].y;
-          const len = this.distance(
-            this.fordCircles[this.changeParent].x,
-            this.fordCircles[this.changeParent].y,
-            collisionPoint.x,
-            collisionPoint.y
-          );
-          this.debuggerLine = new DebuggerLine(
-            this.fordCircles[this.changeParent].x,
-            this.fordCircles[this.changeParent].y,
-            len,
-            Math.atan2(dy, dx),
-            this.ctx
-          );
-          // should get the ratio between the previous parent and the new one
+          // const len = this.distance(
+          //   this.fordCircles[this.changeParent].x,
+          //   this.fordCircles[this.changeParent].y,
+          //   collisionPoint.x,
+          //   collisionPoint.y
+          // );
+          //this.debuggerLine = new DebuggerLine(
+          //   this.fordCircles[this.changeParent].x,
+          //   this.fordCircles[this.changeParent].y,
+          //   len,
+          //   Math.atan2(dy, dx),
+          //   this.ctx
+          // );
+
+          //should get the ratio between the previous parent and the new one
           const ratio =
             circle.parentCircle.radius /
             this.fordCircles[this.changeParent].radius;
@@ -290,9 +286,9 @@ class App {
       }
     });
 
-    this.drawTangentPoints();
+    //this.drawTangentPoints();
 
-    if (this.debuggerLine) this.debuggerLine.draw();
+    //if (this.debuggerLine) this.debuggerLine.draw();
 
     requestAnimationFrame(this.draw.bind(this));
   }
