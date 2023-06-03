@@ -18,6 +18,12 @@ class App {
     this.tangentPoints = [];
     this.currentIndex;
 
+    //1 - Launch Ball
+    //2 - Remove Ball
+    this.mode = 2;
+
+    this.removedParent = [];
+
     this.previousParent = null;
 
     /**
@@ -39,9 +45,25 @@ class App {
     this.childCircles = [];
     document.addEventListener("click", this.checkClick.bind(this));
 
+    document.addEventListener("keyup", this.keyUpHandler.bind(this));
+
     //this.debuggerLine = null;
 
     this.setup();
+  }
+
+  keyUpHandler(ev) {
+    switch (ev.keyCode) {
+      case 49:
+        this.mode = 1;
+        break;
+      case 50:
+        this.mode = 2;
+        break;
+      default:
+        break;
+    }
+    console.log("mode: " + this.mode);
   }
 
   setup() {
@@ -100,19 +122,30 @@ class App {
     //check if click is inside any circle
     this.fordCircles.forEach((circle, index) => {
       const dist = this.distance(e.clientX, e.clientY, circle.x, circle.y);
+
       if (dist < circle.radius) {
-        this.addChildCircle(circle, index);
+        if (this.mode === 1 && this.removedParent.includes(index)) {
+          this.addChildCircle(circle, index);
 
-        const randomSoundNumber = Math.floor(Math.random() * 19) + 1;
-        this.audio = new Audio(`Assets/sound${randomSoundNumber}.wav`);
+          const randomSoundNumber = Math.floor(Math.random() * 19) + 1;
+          this.audio = new Audio(`Assets/sound${randomSoundNumber}.wav`);
 
-        this.audio.play();
-        // this.synth.triggerAttackRelease(
-        //   `${this.notes[Math.floor(Math.random() * this.notes.length)]}${
-        //     Math.floor(Math.random() * 3) + 1.5
-        //   }`,
-        //   "1n"
-        // );
+          this.audio.play();
+        } else if (this.mode == 2 && !this.removedParent.includes(index)) {
+          this.removedParent.push(index);
+          circle.changeColor([
+            "rgb(255, 255, 255)",
+            "rgb(240, 240, 240)",
+            "rgb(200, 200, 200)",
+          ]);
+
+          // this.synth.triggerAttackRelease(
+          //   `${this.notes[Math.floor(Math.random() * this.notes.length)]}${
+          //     Math.floor(Math.random() * 3) + 1.5
+          //   }`,
+          //   "1n"
+          // );
+        }
       }
     });
   }
@@ -238,11 +271,11 @@ class App {
           collisionPoint.name2,
           circle.parentName
         );
-        console.log(this.changeParent, collision);
 
         if (
           this.changeParent !== this.previousParent &&
-          circle.prevParent != this.changeParent
+          circle.prevParent != this.changeParent &&
+          this.removedParent.includes(this.changeParent)
         ) {
           this.previousParent = this.changeParent;
           // console.log(this.changeParent);

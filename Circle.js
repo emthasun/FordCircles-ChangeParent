@@ -9,14 +9,27 @@ export default class Circle {
     this.parentCircle = null;
     this.angle = 0;
     this.speed = 0.005;
+    this.colorStopType0 = [
+      "rgb(250, 150, 20)",
+      "rgb(250, 100, 210)",
+      "rgb(210, 190, 255)",
+    ];
+    this.colorStopType1 = [
+      "rgb(255, 255, 255)",
+      "rgb(240, 240, 240)",
+      "rgb(200, 200, 200)",
+    ];
     this.draw();
   }
 
   update(x, y) {
     this.x = x;
     this.y = y;
-
     this.radius += (this.targetRadius - this.radius) * 0.1;
+  }
+
+  changeColor(newColor) {
+    this.colorStopType0 = newColor;
   }
 
   draw() {
@@ -29,18 +42,13 @@ export default class Circle {
       this.radius
     );
     if (this.type == 0) {
-      //gradient.addColorStop(0, 'rgb(0, 0, 0)');
-      // this.ctx.stroke();
-      // this.ctx.strokeStyle = "white";
-      this.ctx.fillStyle = gradient;
-      gradient.addColorStop(0, "rgb(250, 150, 20)");
-      gradient.addColorStop(0.5, "rgb(250, 100, 210)");
-      gradient.addColorStop(1, "rgb(210, 190, 255)");
+      gradient.addColorStop(0, this.colorStopType0[0]);
+      gradient.addColorStop(0.5, this.colorStopType0[1]);
+      gradient.addColorStop(1, this.colorStopType0[2]);
     } else if (this.type == 1) {
-      gradient.addColorStop(1, "rgb(255, 255, 255)");
-      gradient.addColorStop(0.93, "rgb(240, 240, 240)");
-      // gradient.addColorStop(0.4, 'rgb(100, 100, 200)');
-      gradient.addColorStop(0.1, "rgb(200, 200, 200)");
+      gradient.addColorStop(0, this.colorStopType1[0]);
+      gradient.addColorStop(0.93, this.colorStopType1[1]);
+      gradient.addColorStop(1, this.colorStopType1[2]);
     }
 
     this.ctx.fillStyle = gradient;
